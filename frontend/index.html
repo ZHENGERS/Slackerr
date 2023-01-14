@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Slackr</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- You can add your styles and scripts here -->
+  <link rel="stylesheet" type="text/css" media="screen" href="styles/provided.css" />
+  <script type="module" src="src/helpers.js"></script>
+
+  <!-- Bootstrap import -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div class="container-fluid" >
+    <header class="banner">
+      <nav class="navbar navbar-light">
+        <div class="container-fluid" id="nav-bar">
+          <h1>Slackr</h1>
+          <button type="button" class="btn btn-dark btn-sm" id="profile-link" style="display:none;">Profile</button><br>
+          <button type="button" class="btn btn-link" id="logout-link" style="display:none;">Log out</button><br>
+        </div>
+      </nav>
+      <hr>
+
+    </header>
+    <main role="main">
+      <div id="logged-out">
+          <section id="login-container">
+            <form id="login-form">
+              <h3>Login</h3>
+              Email<br><input type="text" name="email" class="login" required> 
+              Password<br><input type="password" name="password" class="login" required>  
+              <button type="button" class="btn btn-primary" id="login-button">Log In</button>
+            </form>
+            <button type="button" class="btn btn-link" id="register-link">Create Account Here</button>
+
+          </section>      
+          <section id="register-container" class="hide">
+            <form id="register-form">
+              <h3>Register</h3>
+              <input type="text" name="name" class="register" placeholder="Enter your name" required>  
+              <input type="text" name="email" class="register" placeholder="Enter your email" required>    
+              <input type="password" name="password1" class="register" placeholder="Create a password" required> 
+              <input type="password" name="password2" class="register" placeholder="Confirm your password" required>  
+              <button type="button" class="btn btn-primary" id="register-button">Register</button>
+            </form>
+            <button type="button" class="btn btn-link" id="login-link">Log in</button>
+          </section>
+      </div>
+      <div id="logged-in" class="hide">
+        <section id="dashboard">
+          <div id="channels-list">
+            <h4>Public Channels</h4>
+            <div id="public-channels" class="list-group"><br>
+            </div>
+            <h4>My Channels</h4>
+            <div id="private-channels" class="list-group"><br>
+            </div>
+          </div>
+          <br><button type="button" class="btn btn-secondary" id="create-channel-button">Create Channel</button>
+          <div id="create-channel" class="hide">
+            <form id="create-channel-form">
+              Channel Name: <input type="text" name="name" required><br>
+              Description: <textarea name="description" cols="25"></textarea><br>  
+              Public<input type="radio" name="public-private" value="public" checked>
+              Private<input type="radio" name="public-private" value="private">
+              <br><button type="button" class="btn btn-success" id="create-channel-submit">Create Channel</button>
+            </form>
+          </div>
+        </section>
+
+        <section id="channel-page" class="hide">
+
+          <div id="channel-details" class="hide">
+            <h3 class="display-6" id="channel-name"></h3>
+            <button type="button" class="btn btn-danger btn-sm" id="leave-channel-button">Leave Channel</button>
+            <hr>
+            <dl class="row">            
+              <dt class="col-sm-3">Channel Type</dt>
+              <dd class="col-sm-9" id="channel-private">
+              <dt class="col-sm-3">Created At</dt>
+              <dd class="col-sm-9" id="channel-time">
+              <dt class="col-sm-3">Channel Description</dt>
+              <dd class="col-sm-9" id="channel-description">
+            </dl>
+            
+            <div>
+              <button type="button" class="btn btn-outline-primary btn-sm" id="update-channel-button">Update Details</button>
+              <form id="update-channel-form" class="hide">
+                Channel Name <input type="text" name="name"> <br> 
+                Description <textarea name="description" cols="25"></textarea> 
+                <button type="button" class="btn btn-primary btn-sm" id="update-channel">Update</button>
+              </form>
+            </div>
+            <br><button id="invite-users-btn" type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#invite-users-modal">Invite users</button>
+            <hr>
+          </div>
+
+          <div id="channel-messages">
+            <div id="channel-messages-body">
+
+            </div>
+            <div id="channel-messages-bottom">
+              <textarea id="message" placeholder="Type your message here..."></textarea><br>
+              <div id="send-message-container" style="display:flex; justify-content: space-between;">
+                <input id="send-image" type="file" accept="image/*" name="image" id="image-send">
+                <button type="button" class="btn btn-success" id="send-message">Send Message</button>
+              </div>
+            </div><br>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span><button type="button" class="btn btn-secondary btn-sm" id="previous-button">Previous</button></span>
+            <span id="page-num">1</span>
+            <span><button type="button" class="btn btn-secondary btn-sm" id="next-button">Next</button></span>
+          </div>
+          <br><button type="button" class="btn btn-secondary btn-sm" id="back-button">Back to dashboard</button>
+        </section>
+
+        <section id="view-user-profile" class="hide">
+          <img id="user-profile-image" width="200"/>
+          <div id="user-profile-name"> </div>
+          <div id="user-profile-email"> </div>
+          <div id="user-profile-bio"> </div>
+
+          <br><button type="button" class="btn btn-secondary btn-sm" id="back-channel">Back to channel</button>
+        </section>
+
+        <section id="profile-section" class="hide">
+          <div id="current-profile">
+            <div id="current-profile-image" style="display:flex;">
+              <div style="display:flex; flex-direction:column;">
+                <img id="output" width="180px" style="padding-right: 15%;"/>	
+                <div id="profile-name">Name: </div>
+                <div id="profile-email">Email: </div>
+              </div>
+              <div id="bio" style="display:flex; flex-direction: column;">
+                <div style="display:flex; flex-direction:row; justify-content: center;">
+                  <h4 style="padding-right: 10px;">Bio</h4>
+                  <svg id="edit-bio" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                  </svg>
+                </div>
+                <textarea id="editable-bio" class="form-control" placeholder="Click the pencil icon to edit" cols="150" style="height:80%;" readonly></textarea><br>
+                <button type="button" class="btn btn-secondary btn-sm" id="update-bio-button">Update Bio</button>
+              </div>
+            </div>
+            <hr>
+          </div>
+          <p>Upload New Profile Image</p>
+          <input id="upload-profile-image" type="file" accept="image/*" name="image" id="file"><br><br>
+          <button type="button" class="btn btn-secondary btn-sm" id="update-profile-button">Update Name and Email</button><br>
+          <form id="update-profile-form" class="hide">
+            <input type="text" name="name" placeholder="Enter new name">  
+            <input type="text" name="email" placeholder="Enter new email"><br>  
+            <button type="button" class="btn btn-primary btn-sm" id="submit-new-profile">Update</button>   
+          </form>
+
+          <button type="button" class="btn btn-link btn-sm" id="change-password">Change my password</button><br>
+          <form id="new-password" class="hide">
+            <div><input id="update-password" type="password" placeholder="Enter new password"></div>
+            <div><input id="confirm-update-password" type="password" placeholder="Confirm new password"></div>
+            <button type="button" class="btn btn-primary btn-sm" id="submit-new-password">Update</button>
+            <svg id="toggle-password" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16" style="display:inline">
+              <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+              <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+            </svg>
+          </form>
+          <hr>
+          <br><button type="button" class="btn btn-secondary btn-sm" id="back-dashboard">Back to dashboard</button>
+        </section>
+
+      </div>
+    </main>
+    <footer>
+      <p>&copy; Slackr</p>
+    </footer>
+  </div>
+  <div class="modal fade" id="join-channel-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-modal="true"role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Join Channel</h3>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          Do you want to join this channel?
+        </div>  
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="channel-join-button">Join Channel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show" id="backdrop" style="display: none;"></div>
+
+
+  <div class="card hide" id="message-template-wrapper" style="display:none; color:black;">
+    <div id="message-details" class="card-header">
+      <img class="profile-image" width="30px" />	
+      <span id="message-user"></span>
+      <span id="message-time"></span>
+    </div>
+    <div class="card-body" id="message-template">
+      <div id="message-body">
+        <a data-bs-toggle="modal" data-bs-target="#image-modal"><img id="message-image" class="img-thumbnail" width="50px"></a>
+      </div> 
+
+        <div id="message-actions">
+          <div class="dropdown">
+            <button class="btn dropdown" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+              </svg>
+            </button>
+            <ul class="dropdown-menu hide" aria-labelledby="dropdownMenuButton1">
+              <li><a class="dropdown-item pin">Pin</a></li>
+              <li><a class="dropdown-item unpin">Unpin</a></li>
+              <li><a class="dropdown-item edit">Edit Message</a></li>
+              <li><a class="dropdown-item delete">Delete Message</a></li>
+            </ul>
+            </div>
+
+          <div class="react-div">
+            <button class="btn thumbs-up grayed-out" style="padding:0; margin:0;">&#128077</button>
+            <button class="btn heart grayed-out" style="padding:0; margin:0;" >&#10084</button>
+            <button class="btn laugh grayed-out" style="padding:0; margin:0;">&#128514</button>
+            <button class="btn check grayed-out"style="padding:0; margin:0;">&#10004</button>
+          </div>
+        </div>
+
+    </div>
+  </div>
+
+  <div class="modal fade" id="invite-users-modal" tabindex="-1" aria-labelledby="inviteUsersModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="inviteUsersModalLabel">Invite Users</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="invite-user-form">
+            <ul id="user-list" class="list-group list-group-flush">
+            </ul>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button id="invite-users-action" type="button" class="btn btn-primary">Invite</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="image-modal">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <ul id="modal-image-list">
+
+          </ul>
+        </div>  
+      </div>
+    </div>
+  </div>
+
+
+  <script type="module" src="src/main.js" charset="utf-8"></script>
+</body>
+
+</html>
